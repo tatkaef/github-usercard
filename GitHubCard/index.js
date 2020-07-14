@@ -3,6 +3,8 @@
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+import axios from 'axios'
+const promise = axios.get('https://api.github.com/users/tatkaef')
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -12,10 +14,22 @@
     Skip to STEP 3.
 */
 
+
+
 /*
   STEP 4: Pass the data received from Github into your function,
     and append the returned markup to the DOM as a child of .cards
 */
+
+promise.then((response) => {
+  // console.log(response.data);
+  const card = makeCard(response.data);
+  document.querySelector('.cards').appendChild(card);
+})
+.catch(function (error) {  
+  console.log('Error:', error)
+})
+
 
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
@@ -28,7 +42,12 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['mikeattara', 'maaddae', 'VirtualGoat', 'dustinmyers','justsml','luishrd','bigknell']
+
+
+followersArray.forEach(follower => {
+  addNewCard(follower);
+})
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,6 +68,55 @@ const followersArray = [];
       </div>
     </div>
 */
+function makeCard(obj) {
+  const card = document.createElement('div');
+  const img = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const name = document.createElement('h3');
+  const username = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const gitlink = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  card.appendChild(img);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(name);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+  profile.appendChild(gitlink);
+
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  name.classList.add('name');
+  username.classList.add('username');
+
+  img.src = obj.avatar_url;
+  name.textContent = obj.name;
+  username.textContent = obj.login;
+  location.textContent = obj.location;
+  gitlink.href = obj['html_url'];
+  followers.textContent = obj.followers;
+  following.textContent = obj.following;
+  bio.textContent = obj.bio;
+
+  return card;
+}
+
+function addNewCard(username) {
+  const promise = axios.get(`https://api.github.com/users/${username}`);
+  promise.then((response) => {
+    const card = makeCard(response.data);
+    document.querySelector('.cards').appendChild(card);
+  });
+}
+
 
 /*
   List of LS Instructors Github username's:
